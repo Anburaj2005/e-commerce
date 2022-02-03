@@ -1,33 +1,28 @@
-import React from 'react';
+import React, { useEffect,useState} from 'react';
 import Layout from '../components/Layout';
 import { collection,addDoc,getDocs} from "firebase/firestore"; 
 import fireDB from '../fireConfig';
-import { async } from '@firebase/util';
+import { fireProducts } from '../fireProducts';
 
 export default function Homepage() {
- 
-  async function adddata(){
-    try{
-    await addDoc(collection(fireDB,"users"),{name:"praveen", Age:38} );
-    }
-    catch (error){
-      console.log(error)
-    }
 
-  }
+  const[products, setproducts]=useState({})
+ 
+  useEffect(()=>{
+    getdata()
+  },[]);
+
   async function getdata(){
     try{
-    const users= await getDocs(collection(fireDB,"users"),{name:"praveen", Age:38} )
-    const usersArray=[]
+    const users= await getDocs(collection(fireDB,"products"));
+    const productsArray=[];
  users.forEach((doc) => {
-  console.log(doc.id, " => ", doc.data());
   const obj={
     id:doc.id,
     ...doc.data(),
-  }
-users.Array.push(obj)
-});
-console.log(usersArray);
+  };
+productsArray.push(obj);
+}); setproducts(productsArray);
     }catch(error){
       console.log (error);
     }  
@@ -35,13 +30,7 @@ console.log(usersArray);
   return (
 
   <Layout>
-
 <h1>Home</h1>
-
-<button onClick={adddata}>Add data to Firebase</button>
-<button onClick={getdata}>get data from Firebase</button>
-
-
 
   </Layout>
   )
